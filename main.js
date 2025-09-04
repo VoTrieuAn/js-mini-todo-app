@@ -6,7 +6,7 @@ const todoInput = document.querySelector("#todo-input");
 
 function handleTaskActions(e) {
   const taskItem = e.target.closest(".task-item");
-  const taskIndex = taskItem.getAttribute("task-index");
+  const taskIndex = +taskItem.getAttribute("task-index");
   const task = tasks[taskIndex];
   if (e.target.closest(".edit")) {
     let newTitle = prompt("Enter new task title:", task.title);
@@ -17,6 +17,18 @@ function handleTaskActions(e) {
     if (!newTitle) {
       return alert("Please enter new task not empty");
     }
+
+    const hasTask = isDuplicate({
+      value: task.title,
+      tasks,
+      index: taskIndex,
+    });
+
+    if (hasTask) {
+      alert(`Task "${task.title}" already exists!`);
+      return;
+    }
+
     task.title = newTitle;
 
     renderTasks();
@@ -24,7 +36,7 @@ function handleTaskActions(e) {
     task.completed = !task.completed;
     renderTasks();
   } else if (e.target.closest(".delete")) {
-    const isConfirm = confirm("Are you sure delete task?");
+    const isConfirm = confirm(`Are you sure delete "${task.title}" task ?`);
 
     if (isConfirm) {
       tasks.splice(taskIndex, 1);
@@ -36,9 +48,16 @@ function handleTaskActions(e) {
 function addTask(e) {
   e.preventDefault();
   const value = todoInput.value.trim();
-  console.log(value);
+
   if (!value) {
     return alert("Please enter new task");
+  }
+
+  const hasTask = isDuplicate({ value, tasks });
+
+  if (hasTask) {
+    alert(`Task "${value}" already exists!`);
+    return;
   }
 
   tasks.push({
@@ -75,6 +94,13 @@ function renderTasks() {
     .join("");
 
   taskList.innerHTML = html;
+}
+
+function isDuplicate({ value, tasks, index = -1 }) {
+  return tasks.some(
+    (task, idx) =>
+      task.title.toLowerCase() === value.toLowerCase() && index !== idx
+  );
 }
 
 renderTasks();
