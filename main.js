@@ -1,4 +1,9 @@
-const tasks = [];
+/**
+ * Nullish Coalescing Operator
+ * const result = a ?? b;
+ * Chỉ lấy b nếu a là null hoặc undefined.
+ */
+const tasks = JSON.parse(localStorage.getItem("tasks")) ?? [];
 
 const taskList = document.querySelector("#task-list");
 const todoForm = document.querySelector(".todo-form");
@@ -32,6 +37,7 @@ function handleTaskActions(e) {
     task.title = newTitle;
 
     renderTasks();
+    saveTasks();
   } else if (e.target.closest(".done")) {
     task.completed = !task.completed;
     renderTasks();
@@ -66,7 +72,7 @@ function addTask(e) {
   });
 
   renderTasks();
-
+  saveTasks();
   todoForm.reset();
 }
 
@@ -103,6 +109,9 @@ function isDuplicate({ value, tasks, index = -1 }) {
   );
 }
 
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 renderTasks();
 
 todoForm.addEventListener("submit", addTask);
