@@ -5,6 +5,26 @@ const tasks = [
 ];
 
 const taskList = document.querySelector("#task-list");
+const todoForm = document.querySelector(".todo-form");
+const todoInput = document.querySelector("#todo-input");
+
+todoForm.onsubmit = function (e) {
+  e.preventDefault();
+  const value = todoInput.value.trim();
+  console.log(value);
+  if (!value) {
+    return alert("Vui lòng nhập task");
+  }
+
+  tasks.push({
+    title: value,
+    completed: false,
+  });
+
+  renderTasks();
+
+  todoForm.reset();
+};
 
 function renderTasks() {
   const html = tasks
