@@ -1,8 +1,4 @@
-const tasks = [
-  { title: "Design a website", completed: true },
-  { title: "Learn JavaScript", completed: false },
-  { title: "Build a Todo App", completed: true },
-];
+const tasks = [];
 
 const taskList = document.querySelector("#task-list");
 const todoForm = document.querySelector(".todo-form");
@@ -17,9 +13,11 @@ taskList.onclick = function (e) {
     task.title = newTitle;
     renderTasks();
   } else if (e.target.closest(".done")) {
-    console.log("Done");
+    task.completed = !task.completed;
+    renderTasks();
   } else if (e.target.closest(".delete")) {
-    console.log("Delete");
+    tasks.splice(taskIndex, 1);
+    renderTasks();
   }
 };
 
