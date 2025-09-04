@@ -11,7 +11,14 @@ const todoInput = document.querySelector("#todo-input");
 
 function handleTaskActions(e) {
   const taskItem = e.target.closest(".task-item");
-  const taskIndex = +taskItem.getAttribute("task-index");
+  if (!taskItem) return;
+  // const taskIndex = +taskItem.getAttribute("data-index");
+  /**
+   * Dataset
+   * Đặt tên theo chuẩn html data-[name]=[value] để set attribute
+   * Có thể dùng cú pháp taskItem.dataset.[name] để lấy ra
+   */
+  const taskIndex = +taskItem.dataset.index;
   const task = tasks[taskIndex];
   if (e.target.closest(".edit")) {
     let newTitle = prompt("Enter new task title:", task.title);
@@ -41,12 +48,14 @@ function handleTaskActions(e) {
   } else if (e.target.closest(".done")) {
     task.completed = !task.completed;
     renderTasks();
+    saveTasks();
   } else if (e.target.closest(".delete")) {
     const isConfirm = confirm(`Are you sure delete "${task.title}" task ?`);
 
     if (isConfirm) {
       tasks.splice(taskIndex, 1);
       renderTasks();
+      saveTasks();
     }
   }
 }
@@ -84,7 +93,7 @@ function renderTasks() {
   }
   const html = tasks
     .map((task, index) => {
-      return `<li task-index=${index} class="task-item ${
+      return `<li data-index=${index} class="task-item ${
         task.completed ? "completed" : ""
       }">
     <span class="task-title">${task.title}</span>
