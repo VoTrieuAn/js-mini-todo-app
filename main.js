@@ -4,24 +4,36 @@ const taskList = document.querySelector("#task-list");
 const todoForm = document.querySelector(".todo-form");
 const todoInput = document.querySelector("#todo-input");
 
-taskList.onclick = function (e) {
+function handleTaskActions(e) {
   const taskItem = e.target.closest(".task-item");
   const taskIndex = taskItem.getAttribute("task-index");
   const task = tasks[taskIndex];
   if (e.target.closest(".edit")) {
-    const newTitle = prompt("Enter new task title:", task.title);
+    let newTitle = prompt("Enter new task title:", task.title);
+    if (newTitle === null) return;
+
+    newTitle = newTitle.trim();
+
+    if (!newTitle) {
+      return alert("Please enter new task not empty");
+    }
     task.title = newTitle;
+
     renderTasks();
   } else if (e.target.closest(".done")) {
     task.completed = !task.completed;
     renderTasks();
   } else if (e.target.closest(".delete")) {
-    tasks.splice(taskIndex, 1);
-    renderTasks();
-  }
-};
+    const isConfirm = confirm("Are you sure delete task?");
 
-todoForm.onsubmit = function (e) {
+    if (isConfirm) {
+      tasks.splice(taskIndex, 1);
+      renderTasks();
+    }
+  }
+}
+
+function addTask(e) {
   e.preventDefault();
   const value = todoInput.value.trim();
   console.log(value);
@@ -37,9 +49,14 @@ todoForm.onsubmit = function (e) {
   renderTasks();
 
   todoForm.reset();
-};
+}
 
 function renderTasks() {
+  if (!tasks.length) {
+    taskList.innerHTML = `<li class="empty-message">No task available</li>`;
+
+    return;
+  }
   const html = tasks
     .map((task, index) => {
       return `<li task-index=${index} class="task-item ${
@@ -61,3 +78,6 @@ function renderTasks() {
 }
 
 renderTasks();
+
+todoForm.addEventListener("submit", addTask);
+taskList.addEventListener("click", handleTaskActions);
